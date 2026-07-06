@@ -1,29 +1,45 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Paleta "de la nona": inspirada en losalfajoresdelanona.com —
+ * crema cálida, rosa alfajor y marrones de chocolate/dulce de leche.
  */
 
 import { Platform } from 'react-native';
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+export const Palette = {
+  cream: '#FFF6F0', // fondo cálido
+  pinkSoft: '#F6CCD6', // rosa suave (chips, highlights)
+  rose: '#D87A8D', // rosa viejo (primario: botones, tabs activas)
+  roseDark: '#B85E72', // rosa presionado
+  brown: '#7A4B31', // marrón cálido (texto secundario)
+  chocolate: '#4A2A18', // chocolate (texto principal)
+  chocolateDeep: '#2B1810', // fondo modo oscuro
+  cardDark: '#3A241A', // cards en modo oscuro
+  success: '#7BA05B', // verde oliva suave (ok/checks)
+  danger: '#C94F4F', // rojo ladrillo (eliminar/errores)
+};
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    text: Palette.chocolate,
+    background: Palette.cream,
+    tint: Palette.rose,
+    icon: Palette.brown,
+    tabIconDefault: Palette.brown,
+    tabIconSelected: Palette.rose,
+    card: '#FFFFFF',
+    border: Palette.pinkSoft,
+    muted: Palette.brown,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text: Palette.cream,
+    background: Palette.chocolateDeep,
+    tint: Palette.pinkSoft,
+    icon: Palette.pinkSoft,
+    tabIconDefault: '#B08A76',
+    tabIconSelected: Palette.pinkSoft,
+    card: Palette.cardDark,
+    border: Palette.brown,
+    muted: '#D9B8A6',
   },
 };
 

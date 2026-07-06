@@ -4,6 +4,8 @@ import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-rou
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { Palette } from '@/constants/theme';
+import { emitMascot } from '@/lib/mascot';
 import { deleteRecipe, getRecipe, Recipe } from '@/lib/recipes';
 
 export default function RecipeDetailScreen() {
@@ -30,6 +32,7 @@ export default function RecipeDetailScreen() {
   const confirmDelete = () => {
     const doDelete = async () => {
       await deleteRecipe(id);
+      emitMascot('recipe-deleted');
       router.back();
     };
     if (Platform.OS === 'web') {
@@ -117,16 +120,16 @@ const styles = StyleSheet.create({
   },
   editButton: {
     flex: 1,
-    backgroundColor: '#0a7ea4',
-    borderRadius: 8,
-    paddingVertical: 12,
+    backgroundColor: Palette.rose,
+    borderRadius: 12,
+    paddingVertical: 13,
     alignItems: 'center',
   },
   deleteButton: {
     flex: 1,
-    backgroundColor: '#d32f2f',
-    borderRadius: 8,
-    paddingVertical: 12,
+    backgroundColor: Palette.danger,
+    borderRadius: 12,
+    paddingVertical: 13,
     alignItems: 'center',
   },
   buttonText: {

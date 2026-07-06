@@ -1,14 +1,22 @@
 import { useCallback, useState } from 'react';
-import { FlatList, Pressable, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { BouncyPressable } from '@/components/bouncy-pressable';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { Palette } from '@/constants/theme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { listRecipes, Recipe } from '@/lib/recipes';
 
 export default function RecipesScreen() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const router = useRouter();
+
+  const cardColor = useThemeColor({}, 'card');
+  const borderColor = useThemeColor({}, 'border');
+  const mutedColor = useThemeColor({}, 'muted');
 
   useFocusEffect(
     useCallback(() => {
@@ -25,18 +33,19 @@ export default function RecipesScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title">Mis recetas</ThemedText>
-        <Pressable
+        <ThemedText type="title">Mis recetas 📖</ThemedText>
+        <BouncyPressable
           style={styles.addButton}
           onPress={() => router.push('/recipe/new')}
           testID="add-recipe">
           <ThemedText style={styles.addButtonText}>+ Nueva</ThemedText>
-        </Pressable>
+        </BouncyPressable>
       </ThemedView>
 
       {recipes.length === 0 ? (
         <ThemedView style={styles.empty}>
-          <ThemedText style={styles.emptyText} testID="empty-state">
+          <ThemedText style={styles.emptyEmoji}>🍰</ThemedText>
+          <ThemedText style={[styles.emptyText, { color: mutedColor }]} testID="empty-state">
             Todavía no tenés recetas.{'\n'}Creá la primera con el botón «+ Nueva».
           </ThemedText>
         </ThemedView>
@@ -45,18 +54,23 @@ export default function RecipesScreen() {
           data={recipes}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => router.push({ pathname: '/recipe/[id]', params: { id: item.id } })}
-              testID={`recipe-card-${item.id}`}>
-              <ThemedView style={styles.card}>
-                <ThemedText type="defaultSemiBold">{item.title}</ThemedText>
-                <ThemedText style={styles.cardMeta}>
-                  {item.ingredients.length} ingrediente{item.ingredients.length === 1 ? '' : 's'} ·{' '}
-                  {item.servings} porcione{item.servings === 1 ? '' : 's'}
-                </ThemedText>
-              </ThemedView>
-            </Pressable>
+          renderItem={({ item, index }) => (
+            <Animated.View entering={FadeInDown.delay(Math.min(index, 8) * 70).springify()}>
+              <BouncyPressable
+                onPress={() => router.push({ pathname: '/recipe/[id]', params: { id: item.id } })}
+                testID={`recipe-card-${item.id}`}>
+                <ThemedView
+                  style={[styles.card, { backgroundColor: cardColor, borderColor }]}
+                  lightColor={cardColor}
+                  darkColor={cardColor}>
+                  <ThemedText type="defaultSemiBold">{item.title}</ThemedText>
+                  <ThemedText style={[styles.cardMeta, { color: mutedColor }]}>
+                    🧂 {item.ingredients.length} ingrediente{item.ingredients.length === 1 ? '' : 's'} ·{' '}
+                    🍽️ {item.servings} porcione{item.servings === 1 ? '' : 's'}
+                  </ThemedText>
+                </ThemedView>
+              </BouncyPressable>
+            </Animated.View>
           )}
         />
       )}
@@ -77,40 +91,46 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   addButton: {
-    backgroundColor: '#0a7ea4',
-    borderRadius: 8,
+    backgroundColor: Palette.rose,
+    borderRadius: 12,
     paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingVertical: 9,
+    shadowColor: Palette.chocolate,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   addButtonText: {
     color: '#fff',
-    fontWeight: '600',
+    fontWeight: '700',
   },
   list: {
     paddingHorizontal: 16,
-    gap: 10,
-    paddingBottom: 24,
+    paddingBottom: 140,
   },
   card: {
-    borderRadius: 10,
+    borderRadius: 14,
     padding: 14,
     gap: 4,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: '#999',
+    borderWidth: 1,
     marginBottom: 10,
   },
   cardMeta: {
     fontSize: 14,
-    opacity: 0.7,
   },
   empty: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 32,
+    gap: 12,
+  },
+  emptyEmoji: {
+    fontSize: 48,
+    lineHeight: 56,
   },
   emptyText: {
     textAlign: 'center',
-    opacity: 0.7,
   },
 });

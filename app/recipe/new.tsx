@@ -1,6 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
 
 import { RecipeForm } from '@/components/recipe-form';
+import { emitMascot } from '@/lib/mascot';
 import { createRecipe } from '@/lib/recipes';
 
 export default function NewRecipeScreen() {
@@ -13,6 +14,7 @@ export default function NewRecipeScreen() {
         submitLabel="Crear receta"
         onSubmit={async (input) => {
           await createRecipe(input);
+          emitMascot('recipe-created');
           router.back();
         }}
       />

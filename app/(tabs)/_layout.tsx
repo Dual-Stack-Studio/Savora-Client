@@ -8,26 +8,39 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const palette = Colors[colorScheme ?? 'light'];
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: palette.tabIconSelected,
+        tabBarInactiveTintColor: palette.tabIconDefault,
         headerShown: false,
         tabBarButton: HapticTab,
+        tabBarStyle: {
+          backgroundColor: palette.card,
+          borderTopColor: palette.border,
+        },
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: 'Recetas',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="book.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="cook"
+        options={{
+          title: '¿Qué cocino?',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="frying.pan.fill" color={color} />,
         }}
       />
       <Tabs.Screen
         name="shopping"
         options={{
           title: 'Compras',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="cart.fill" color={color} />,
         }}
       />
     </Tabs>

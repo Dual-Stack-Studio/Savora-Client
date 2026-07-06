@@ -5,6 +5,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { RecipeForm } from '@/components/recipe-form';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { emitMascot } from '@/lib/mascot';
 import { getRecipe, Recipe, updateRecipe } from '@/lib/recipes';
 
 export default function EditRecipeScreen() {
@@ -50,6 +51,7 @@ export default function EditRecipeScreen() {
         submitLabel="Guardar cambios"
         onSubmit={async (input) => {
           await updateRecipe(id, input);
+          emitMascot('recipe-updated');
           router.back();
         }}
       />
