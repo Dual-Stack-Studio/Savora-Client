@@ -18,11 +18,9 @@
 
 | Nivel | Herramienta | Qué cubre | Dónde |
 |---|---|---|---|
-| Unitario (front) | Jest (`jest-expo`) | Reglas de validación y capa de datos | `lib/__tests__/` |
-| Unitario (back) | Jest (`ts-jest`) | Lógica de matching y filtro de dieta | `api/tests/matching.test.ts` |
-| Integración API | Supertest | Endpoints HTTP, validaciones, códigos de estado | `api/tests/api.test.ts` |
-| Smoke test | Manual (curl/Postman) | Que la API arranque y responda de verdad (ver DEF-001) | `qa/test-cases/TC-api-sugerencias.md` |
+| Unitario | Jest (`jest-expo`) | Reglas de validación y capa de datos | `lib/__tests__/` |
 | Manual | Casos de prueba documentados | Flujos de UI, usabilidad, casos borde visuales | `qa/test-cases/` |
+| Backend | Jest + Supertest + smoke tests | Matching, endpoints, validaciones | repo `nicy-kitchen-api` (`tests/` y `qa/`) |
 | Componente (próximo) | React Native Testing Library | Formularios y pantallas | pendiente |
 | E2E (próximo) | Maestro | Flujos completos en dispositivo/emulador | pendiente |
 
