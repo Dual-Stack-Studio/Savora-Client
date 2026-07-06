@@ -4,23 +4,24 @@
 
 ## 1. Alcance
 
-### Milestone 1 (actual) — en alcance
-- CRUD de recetas propias (crear, ver, editar, eliminar)
-- Lista de compras (agregar, tildar, eliminar, limpiar comprados)
-- Persistencia local (AsyncStorage)
+### En alcance
+- **M1:** CRUD de recetas propias, lista de compras, persistencia local (AsyncStorage)
+- **M2a:** API de sugerencias por ingredientes (`api/`): matching con sinónimos multi-idioma, ranking por score, filtro de dieta jerárquico (vegano ⊂ vegetariano)
 
 ### Fuera de alcance (milestones futuros)
+- Auth y recetas del usuario en el servidor, deploy (M2b)
 - OCR de PDF/fotos, subida de video/imagen
 - Social: amigos, compartir recetas, partner de lista de compras
-- Sugerencias por ingredientes, productos regionales
-- Notificaciones de stock, multi-idioma
-- Backend / sincronización entre dispositivos
+- Productos regionales, notificaciones de stock, multi-idioma de UI
 
 ## 2. Estrategia de pruebas
 
 | Nivel | Herramienta | Qué cubre | Dónde |
 |---|---|---|---|
-| Unitario | Jest (`jest-expo`) | Reglas de validación y capa de datos | `lib/__tests__/` |
+| Unitario (front) | Jest (`jest-expo`) | Reglas de validación y capa de datos | `lib/__tests__/` |
+| Unitario (back) | Jest (`ts-jest`) | Lógica de matching y filtro de dieta | `api/tests/matching.test.ts` |
+| Integración API | Supertest | Endpoints HTTP, validaciones, códigos de estado | `api/tests/api.test.ts` |
+| Smoke test | Manual (curl/Postman) | Que la API arranque y responda de verdad (ver DEF-001) | `qa/test-cases/TC-api-sugerencias.md` |
 | Manual | Casos de prueba documentados | Flujos de UI, usabilidad, casos borde visuales | `qa/test-cases/` |
 | Componente (próximo) | React Native Testing Library | Formularios y pantallas | pendiente |
 | E2E (próximo) | Maestro | Flujos completos en dispositivo/emulador | pendiente |

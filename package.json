@@ -16,6 +16,10 @@
     "preset": "jest-expo",
     "setupFiles": [
       "./jest.setup.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/api/"
     ]
   },
   "dependencies": {
