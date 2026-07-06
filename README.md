@@ -1,50 +1,44 @@
-# Welcome to your Expo app 👋
+# Nicy Kitchen 🍳
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+App de recetas y cocina construida con [Expo SDK 54](https://docs.expo.dev/versions/v54.0.0/) + expo-router + TypeScript. Proyecto de práctica dev + QA.
 
-## Get started
+## Roadmap
 
-1. Install dependencies
+- [x] **M1 — Núcleo (actual):** CRUD de recetas propias + lista de compras (persistencia local)
+- [ ] **M2 — Backend:** API + base de datos, auth, sincronización
+- [ ] **M3 — Social:** amigos, compartir/editar recetas, partner de lista de compras
+- [ ] **M4 — Media & IA:** OCR de PDF/fotos, subida de fotos/videos, sugerencias por ingredientes
+- [ ] **M5 — Extras:** productos regionales, recordatorio de stock, multi-idioma
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Correr el proyecto
 
 ```bash
-npm run reset-project
+npm install
+npm run web       # navegador
+npm run android   # emulador/dispositivo Android
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Testing
 
-## Learn more
+```bash
+npm test          # tests unitarios (Jest + jest-expo)
+npm run test:watch
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+- **Plan de pruebas:** [qa/test-plan.md](qa/test-plan.md)
+- **Casos de prueba manuales:** [qa/test-cases/](qa/test-cases/)
+- **Registro de defectos:** [qa/defects.md](qa/defects.md)
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Estructura
 
-## Join the community
+```
+app/              pantallas (expo-router, file-based routing)
+  (tabs)/         tabs: Recetas y Compras
+  recipe/         detalle, alta y edición de recetas
+components/       componentes compartidos (RecipeForm, etc.)
+lib/              capa de datos + reglas de negocio (testeable)
+  __tests__/      tests unitarios
+qa/               plan de pruebas, casos de prueba, defectos
+```
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+La persistencia vive aislada en `lib/` (AsyncStorage por ahora) para poder cambiarla por un backend en M2 sin tocar pantallas ni validaciones.

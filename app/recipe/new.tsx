@@ -1,0 +1,21 @@
+import { Stack, useRouter } from 'expo-router';
+
+import { RecipeForm } from '@/components/recipe-form';
+import { createRecipe } from '@/lib/recipes';
+
+export default function NewRecipeScreen() {
+  const router = useRouter();
+
+  return (
+    <>
+      <Stack.Screen options={{ title: 'Nueva receta' }} />
+      <RecipeForm
+        submitLabel="Crear receta"
+        onSubmit={async (input) => {
+          await createRecipe(input);
+          router.back();
+        }}
+      />
+    </>
+  );
+}
