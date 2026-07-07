@@ -7,12 +7,14 @@ import { BouncyPressable } from '@/components/bouncy-pressable';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Palette } from '@/constants/theme';
+import { useAuth } from '@/contexts/auth-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { listRecipes, Recipe } from '@/lib/recipes';
 
 export default function RecipesScreen() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const router = useRouter();
+  const { user } = useAuth();
 
   const cardColor = useThemeColor({}, 'card');
   const borderColor = useThemeColor({}, 'border');
@@ -36,7 +38,7 @@ export default function RecipesScreen() {
         <ThemedText type="title">My recipes 📖</ThemedText>
         <BouncyPressable
           style={styles.addButton}
-          onPress={() => router.push('/recipe/new')}
+          onPress={() => router.push(user ? '/recipe/new' : '/modal')}
           testID="add-recipe">
           <ThemedText style={styles.addButtonText}>+ New</ThemedText>
         </BouncyPressable>

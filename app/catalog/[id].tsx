@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
-import { Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { ActivityIndicator, ScrollView, StyleSheet, View } from 'react-native';
+import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 
+import { FavoriteButton } from '@/components/favorite-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Palette } from '@/constants/theme';
@@ -23,6 +24,7 @@ export default function CatalogRecipeScreen() {
   const [recipe, setRecipe] = useState<RecipeDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const router = useRouter();
 
   const mutedColor = useThemeColor({}, 'muted');
   const borderColor = useThemeColor({}, 'border');
@@ -75,7 +77,18 @@ export default function CatalogRecipeScreen() {
     <>
       <Stack.Screen options={{ title: recipe.title }} />
       <ScrollView contentContainerStyle={styles.container}>
-        <ThemedText type="title">{recipe.title}</ThemedText>
+        <View style={styles.titleRow}>
+          <ThemedText type="title" style={styles.titleText}>
+            {recipe.title}
+          </ThemedText>
+          <FavoriteButton
+            source="catalog"
+            recipeId={Number(id)}
+            title={recipe.title}
+            image={null}
+            onRequireSignIn={() => router.push('/modal')}
+          />
+        </View>
         <ThemedText style={[styles.meta, { color: mutedColor }]}>
           {DIET_LABEL[recipe.diet]}
         </ThemedText>
@@ -115,6 +128,14 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     gap: 6,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  titleText: {
+    flex: 1,
   },
   center: {
     flex: 1,

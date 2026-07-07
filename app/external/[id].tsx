@@ -1,9 +1,10 @@
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, Linking, ScrollView, StyleSheet } from 'react-native';
+import { ActivityIndicator, Linking, ScrollView, StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
-import { Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { BouncyPressable } from '@/components/bouncy-pressable';
+import { FavoriteButton } from '@/components/favorite-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Palette } from '@/constants/theme';
@@ -15,6 +16,7 @@ export default function ExternalRecipeScreen() {
   const [recipe, setRecipe] = useState<ExternalRecipeDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const router = useRouter();
 
   const mutedColor = useThemeColor({}, 'muted');
   const borderColor = useThemeColor({}, 'border');
@@ -67,7 +69,18 @@ export default function ExternalRecipeScreen() {
         {recipe.image && (
           <Image source={{ uri: recipe.image }} style={styles.image} contentFit="cover" />
         )}
-        <ThemedText type="title">{recipe.title}</ThemedText>
+        <View style={styles.titleRow}>
+          <ThemedText type="title" style={styles.titleText}>
+            {recipe.title}
+          </ThemedText>
+          <FavoriteButton
+            source="external"
+            recipeId={Number(id)}
+            title={recipe.title}
+            image={recipe.image}
+            onRequireSignIn={() => router.push('/modal')}
+          />
+        </View>
         {(recipe.servings || recipe.readyInMinutes) && (
           <ThemedText style={[styles.meta, { color: mutedColor }]}>
             {recipe.servings ? `🍽️ ${recipe.servings} serving${recipe.servings === 1 ? '' : 's'}` : ''}
@@ -130,6 +143,14 @@ const styles = StyleSheet.create({
     height: 180,
     borderRadius: 14,
     marginBottom: 8,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  titleText: {
+    flex: 1,
   },
   meta: {
     fontSize: 14,

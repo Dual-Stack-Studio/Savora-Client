@@ -11,6 +11,7 @@ import {
   View,
 } from 'react-native';
 import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
@@ -18,6 +19,7 @@ import { BouncyPressable } from '@/components/bouncy-pressable';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Palette } from '@/constants/theme';
+import { useAuth } from '@/contexts/auth-context';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { fetchNews, NewsArticle } from '@/lib/api';
 
@@ -35,6 +37,8 @@ export default function HomeScreen() {
   const [heroIndex, setHeroIndex] = useState(0);
 
   const heroRef = useRef<FlatList<NewsArticle>>(null);
+  const router = useRouter();
+  const { user } = useAuth();
   const cardColor = useThemeColor({}, 'card');
   const borderColor = useThemeColor({}, 'border');
   const mutedColor = useThemeColor({}, 'muted');
@@ -100,10 +104,24 @@ export default function HomeScreen() {
             tintColor={Palette.rose}
           />
         }>
-        <ThemedText type="title">Hello, chef! 👋</ThemedText>
-        <ThemedText style={[styles.subtitle, { color: mutedColor }]}>
-          Fresh food & health news to get you inspired.
-        </ThemedText>
+        <View style={styles.headerRow}>
+          <View style={styles.headerText}>
+            <ThemedText type="title">Hello, chef! 👋</ThemedText>
+            <ThemedText style={[styles.subtitle, { color: mutedColor }]}>
+              Fresh food & health news to get you inspired.
+            </ThemedText>
+          </View>
+          <BouncyPressable
+            style={[styles.accountButton, { borderColor }]}
+            onPress={() => router.push('/modal')}
+            testID="account-button">
+            {user?.picture ? (
+              <Image source={{ uri: user.picture }} style={styles.avatar} />
+            ) : (
+              <ThemedText style={styles.accountIcon}>{user ? '👤' : '🔑'}</ThemedText>
+            )}
+          </BouncyPressable>
+        </View>
 
         {loading && (
           <View style={styles.loadingBox}>
@@ -238,6 +256,31 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 14,
     marginTop: 4,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  headerText: {
+    flex: 1,
+  },
+  accountButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  avatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+  },
+  accountIcon: {
+    fontSize: 20,
   },
   loadingBox: {
     paddingVertical: 48,

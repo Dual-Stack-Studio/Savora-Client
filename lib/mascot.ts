@@ -14,7 +14,11 @@ export type MascotEvent =
   | 'results'
   | 'no-results'
   | 'error'
-  | 'poke';
+  | 'poke'
+  | 'signed-in'
+  | 'signed-out'
+  | 'favorited'
+  | 'unfavorited';
 
 type Listener = (event: MascotEvent) => void;
 

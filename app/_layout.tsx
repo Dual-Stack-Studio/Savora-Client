@@ -9,6 +9,7 @@ import 'react-native-reanimated';
 import { IntroSplash } from '@/components/intro-splash';
 import { Mascot } from '@/components/mascot';
 import { Colors, Palette } from '@/constants/theme';
+import { AuthProvider } from '@/contexts/auth-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export const unstable_settings = {
@@ -49,15 +50,17 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? NonaDark : NonaLight}>
-      <View style={{ flex: 1 }}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-        </Stack>
-        {/* Ñoqui vive arriba de todo, siempre presente */}
-        <Mascot />
-        {!introFinished && <IntroSplash onFinish={() => setIntroFinished(true)} />}
-      </View>
+      <AuthProvider>
+        <View style={{ flex: 1 }}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Account' }} />
+          </Stack>
+          {/* Linna vive arriba de todo, siempre presente */}
+          <Mascot />
+          {!introFinished && <IntroSplash onFinish={() => setIntroFinished(true)} />}
+        </View>
+      </AuthProvider>
       <StatusBar style="auto" />
     </ThemeProvider>
   );

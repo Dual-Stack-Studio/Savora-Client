@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import Animated, {
   Easing,

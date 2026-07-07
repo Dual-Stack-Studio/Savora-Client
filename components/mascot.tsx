@@ -65,6 +65,16 @@ const REACTIONS: Record<MascotEvent, Mood[]> = {
     { eyes: "open", mouth: "ᵕ", message: "Hi! I'm Linna" },
     { eyes: "happy", mouth: "o", message: "Will you share a bite?" },
   ],
+  "signed-in": [
+    { eyes: "happy", mouth: "ᵕ", message: "Welcome, chef!" },
+    { eyes: "happy", mouth: "o", message: "Yay, you're in!" },
+  ],
+  "signed-out": [{ eyes: "closed", mouth: "‸", message: "See you soon!" }],
+  favorited: [
+    { eyes: "happy", mouth: "ᵕ", message: "Saved to favorites!" },
+    { eyes: "happy", mouth: "o", message: "Great pick!" },
+  ],
+  unfavorited: [{ eyes: "open", mouth: "‸", message: "Removed from favorites" }],
 };
 
 const IDLE: Pick<Mood, "eyes" | "mouth"> = { eyes: "open", mouth: "ᵕ" };

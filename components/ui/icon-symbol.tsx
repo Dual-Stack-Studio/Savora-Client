@@ -22,6 +22,7 @@ const MAPPING = {
   'frying.pan.fill': 'restaurant',
   'cart.fill': 'shopping-cart',
   'newspaper.fill': 'article',
+  'heart.fill': 'favorite',
 } as IconMapping;
 
 /**
