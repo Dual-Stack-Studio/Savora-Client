@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import 'react-native-reanimated';
 
-import { IntroVideo } from '@/components/intro-video';
+import { IntroSplash } from '@/components/intro-splash';
 import { Mascot } from '@/components/mascot';
 import { Colors, Palette } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -15,8 +15,8 @@ export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-// Mantiene visible el splash nativo hasta que el video de intro esté listo
-// para mostrar su primer frame (IntroVideo llama a hideAsync ahí).
+// Mantiene visible el splash nativo hasta que nuestro splash animado monte
+// (IntroSplash llama a hideAsync apenas aparece).
 SplashScreen.preventAutoHideAsync();
 
 const NonaLight = {
@@ -56,7 +56,7 @@ export default function RootLayout() {
         </Stack>
         {/* Ñoqui vive arriba de todo, siempre presente */}
         <Mascot />
-        {!introFinished && <IntroVideo onFinish={() => setIntroFinished(true)} />}
+        {!introFinished && <IntroSplash onFinish={() => setIntroFinished(true)} />}
       </View>
       <StatusBar style="auto" />
     </ThemeProvider>
