@@ -65,12 +65,12 @@ export function RecipeForm({ initialValue, submitLabel, onSubmit }: Props) {
 
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <ThemedText type="defaultSemiBold">Título</ThemedText>
+      <ThemedText type="defaultSemiBold">Title</ThemedText>
       <TextInput
         style={inputStyle}
         value={title}
         onChangeText={setTitle}
-        placeholder="Ej: Kartoffel-Tortilla"
+        placeholder="E.g.: Kartoffel-Tortilla"
         placeholderTextColor={mutedColor}
         testID="recipe-title"
       />
@@ -80,7 +80,7 @@ export function RecipeForm({ initialValue, submitLabel, onSubmit }: Props) {
         </ThemedText>
       )}
 
-      <ThemedText type="defaultSemiBold">Porciones</ThemedText>
+      <ThemedText type="defaultSemiBold">Servings</ThemedText>
       <TextInput
         style={inputStyle}
         value={servings}
@@ -94,14 +94,14 @@ export function RecipeForm({ initialValue, submitLabel, onSubmit }: Props) {
         </ThemedText>
       )}
 
-      <ThemedText type="defaultSemiBold">Ingredientes</ThemedText>
+      <ThemedText type="defaultSemiBold">Ingredients</ThemedText>
       {ingredients.map((ingredient, index) => (
         <ThemedView key={index} style={styles.ingredientRow}>
           <TextInput
             style={[...inputStyle, styles.ingredientName]}
             value={ingredient.name}
             onChangeText={(name) => setIngredient(index, { name })}
-            placeholder="Ingrediente"
+            placeholder="Ingredient"
             placeholderTextColor={mutedColor}
             testID={`ingredient-name-${index}`}
           />
@@ -109,7 +109,7 @@ export function RecipeForm({ initialValue, submitLabel, onSubmit }: Props) {
             style={[...inputStyle, styles.ingredientQty]}
             value={ingredient.quantity ?? ''}
             onChangeText={(quantity) => setIngredient(index, { quantity })}
-            placeholder="Cantidad"
+            placeholder="Amount"
             placeholderTextColor={mutedColor}
             testID={`ingredient-qty-${index}`}
           />
@@ -123,15 +123,15 @@ export function RecipeForm({ initialValue, submitLabel, onSubmit }: Props) {
       <BouncyPressable
         onPress={() => setIngredients((prev) => [...prev, { ...EMPTY_INGREDIENT }])}
         testID="add-ingredient">
-        <ThemedText style={styles.addIngredient}>+ Agregar ingrediente</ThemedText>
+        <ThemedText style={styles.addIngredient}>+ Add ingredient</ThemedText>
       </BouncyPressable>
 
-      <ThemedText type="defaultSemiBold">Instrucciones</ThemedText>
+      <ThemedText type="defaultSemiBold">Instructions</ThemedText>
       <TextInput
         style={[...inputStyle, styles.instructions]}
         value={instructions}
         onChangeText={setInstructions}
-        placeholder="Paso a paso de la preparación…"
+        placeholder="Step by step preparation…"
         placeholderTextColor={mutedColor}
         multiline
         testID="recipe-instructions"
@@ -147,7 +147,7 @@ export function RecipeForm({ initialValue, submitLabel, onSubmit }: Props) {
         onPress={handleSubmit}
         disabled={saving}
         testID="submit-recipe">
-        <ThemedText style={styles.submitText}>{saving ? 'Guardando…' : submitLabel}</ThemedText>
+        <ThemedText style={styles.submitText}>{saving ? 'Saving…' : submitLabel}</ThemedText>
       </BouncyPressable>
     </ScrollView>
   );

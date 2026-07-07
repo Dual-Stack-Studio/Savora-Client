@@ -37,11 +37,11 @@ export default function RecipeDetailScreen() {
     };
     if (Platform.OS === 'web') {
       // Alert.alert no muestra botones en web; usamos confirm nativo.
-      if (window.confirm('¿Eliminar esta receta? No se puede deshacer.')) void doDelete();
+      if (window.confirm('Delete this recipe? This cannot be undone.')) void doDelete();
     } else {
-      Alert.alert('Eliminar receta', '¿Eliminar esta receta? No se puede deshacer.', [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Eliminar', style: 'destructive', onPress: () => void doDelete() },
+      Alert.alert('Delete recipe', 'Delete this recipe? This cannot be undone.', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: () => void doDelete() },
       ]);
     }
   };
@@ -49,8 +49,8 @@ export default function RecipeDetailScreen() {
   if (loaded && !recipe) {
     return (
       <ThemedView style={styles.center}>
-        <Stack.Screen options={{ title: 'Receta' }} />
-        <ThemedText testID="not-found">Esta receta ya no existe.</ThemedText>
+        <Stack.Screen options={{ title: 'Recipe' }} />
+        <ThemedText testID="not-found">This recipe no longer exists.</ThemedText>
       </ThemedView>
     );
   }
@@ -63,11 +63,11 @@ export default function RecipeDetailScreen() {
       <ScrollView contentContainerStyle={styles.container}>
         <ThemedText type="title">{recipe.title}</ThemedText>
         <ThemedText style={styles.meta}>
-          {recipe.servings} porcione{recipe.servings === 1 ? '' : 's'}
+          {recipe.servings} serving{recipe.servings === 1 ? '' : 's'}
         </ThemedText>
 
         <ThemedText type="subtitle" style={styles.section}>
-          Ingredientes
+          Ingredients
         </ThemedText>
         {recipe.ingredients.map((ingredient, index) => (
           <ThemedText key={index}>
@@ -77,7 +77,7 @@ export default function RecipeDetailScreen() {
         ))}
 
         <ThemedText type="subtitle" style={styles.section}>
-          Instrucciones
+          Instructions
         </ThemedText>
         <ThemedText>{recipe.instructions}</ThemedText>
 
@@ -86,10 +86,10 @@ export default function RecipeDetailScreen() {
             style={styles.editButton}
             onPress={() => router.push({ pathname: '/recipe/edit/[id]', params: { id } })}
             testID="edit-recipe">
-            <ThemedText style={styles.buttonText}>Editar</ThemedText>
+            <ThemedText style={styles.buttonText}>Edit</ThemedText>
           </Pressable>
           <Pressable style={styles.deleteButton} onPress={confirmDelete} testID="delete-recipe">
-            <ThemedText style={styles.buttonText}>Eliminar</ThemedText>
+            <ThemedText style={styles.buttonText}>Delete</ThemedText>
           </Pressable>
         </ThemedView>
       </ScrollView>

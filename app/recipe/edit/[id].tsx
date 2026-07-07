@@ -30,8 +30,8 @@ export default function EditRecipeScreen() {
   if (loaded && !recipe) {
     return (
       <ThemedView style={styles.center}>
-        <Stack.Screen options={{ title: 'Editar receta' }} />
-        <ThemedText>Esta receta ya no existe.</ThemedText>
+        <Stack.Screen options={{ title: 'Edit recipe' }} />
+        <ThemedText>This recipe no longer exists.</ThemedText>
       </ThemedView>
     );
   }
@@ -40,7 +40,7 @@ export default function EditRecipeScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: `Editar: ${recipe.title}` }} />
+      <Stack.Screen options={{ title: `Edit: ${recipe.title}` }} />
       <RecipeForm
         initialValue={{
           title: recipe.title,
@@ -48,7 +48,7 @@ export default function EditRecipeScreen() {
           ingredients: recipe.ingredients,
           instructions: recipe.instructions,
         }}
-        submitLabel="Guardar cambios"
+        submitLabel="Save changes"
         onSubmit={async (input) => {
           await updateRecipe(id, input);
           emitMascot('recipe-updated');

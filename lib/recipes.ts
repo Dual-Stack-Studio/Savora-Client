@@ -49,24 +49,24 @@ export function validateRecipe(input: RecipeInput): RecipeErrors {
 
   const title = input.title.trim();
   if (title.length === 0) {
-    errors.title = 'El título es obligatorio.';
+    errors.title = 'Title is required.';
   } else if (title.length < TITLE_MIN) {
-    errors.title = `El título debe tener al menos ${TITLE_MIN} caracteres.`;
+    errors.title = `Title must be at least ${TITLE_MIN} characters.`;
   } else if (title.length > TITLE_MAX) {
-    errors.title = `El título no puede superar los ${TITLE_MAX} caracteres.`;
+    errors.title = `Title can't be longer than ${TITLE_MAX} characters.`;
   }
 
   if (!Number.isInteger(input.servings) || input.servings < SERVINGS_MIN || input.servings > SERVINGS_MAX) {
-    errors.servings = `Las porciones deben ser un número entero entre ${SERVINGS_MIN} y ${SERVINGS_MAX}.`;
+    errors.servings = `Servings must be a whole number between ${SERVINGS_MIN} and ${SERVINGS_MAX}.`;
   }
 
   const validIngredients = input.ingredients.filter((i) => i.name.trim().length > 0);
   if (validIngredients.length === 0) {
-    errors.ingredients = 'Agregá al menos un ingrediente.';
+    errors.ingredients = 'Add at least one ingredient.';
   }
 
   if (input.instructions.trim().length < INSTRUCTIONS_MIN) {
-    errors.instructions = `Las instrucciones deben tener al menos ${INSTRUCTIONS_MIN} caracteres.`;
+    errors.instructions = `Instructions must be at least ${INSTRUCTIONS_MIN} characters.`;
   }
 
   return errors;
@@ -76,7 +76,7 @@ export class ValidationError extends Error {
   errors: RecipeErrors;
 
   constructor(errors: RecipeErrors) {
-    super('La receta no pasa la validación.');
+    super('Recipe failed validation.');
     this.name = 'ValidationError';
     this.errors = errors;
   }
@@ -133,7 +133,7 @@ export async function updateRecipe(id: string, input: RecipeInput): Promise<Reci
 
   const recipes = await listRecipes();
   const index = recipes.findIndex((r) => r.id === id);
-  if (index === -1) throw new Error(`No existe la receta con id ${id}.`);
+  if (index === -1) throw new Error(`Recipe with id ${id} does not exist.`);
 
   const updated: Recipe = {
     ...recipes[index],

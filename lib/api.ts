@@ -42,16 +42,113 @@ export type SuggestResponse = {
   externalError?: string;
 };
 
+export type NewsTopic = 'food' | 'health';
+
+export type NewsArticle = {
+  id: string;
+  title: string;
+  link: string;
+  description: string | null;
+  image: string | null;
+  source: string | null;
+  publishedAt: string | null;
+};
+
+/** Noticias de comida/salud para la home (proxy a NewsData.io con caché en el backend). */
+export async function fetchNews(topic: NewsTopic): Promise<NewsArticle[]> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}/api/news?topic=${topic}`, { signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  const body = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(body?.error ?? `El servidor respondió ${res.status}.`);
+  }
+  return (body as { articles: NewsArticle[] }).articles;
+}
+
+export type RecipeDetail = {
+  id: number;
+  title: string;
+  diet: Diet;
+  instructions: string;
+  ingredients: { name: string; quantity: string | null }[];
+};
+
+export type ExternalRecipeDetail = {
+  id: number;
+  title: string;
+  image: string | null;
+  servings: number | null;
+  readyInMinutes: number | null;
+  sourceUrl: string | null;
+  ingredients: { name: string; original: string }[];
+  instructions: string[];
+};
+
+/** Detalle de una receta del catálogo (las que aparecen en "From your kitchen"). */
+export async function fetchRecipeDetail(id: number): Promise<RecipeDetail> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}/api/recipes/${id}`, { signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  const body = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(body?.error ?? `El servidor respondió ${res.status}.`);
+  }
+  return (body as { recipe: RecipeDetail }).recipe;
+}
+
+/** Detalle de una receta externa (las que aparecen en "Ideas from the internet"). */
+export async function fetchExternalRecipeDetail(id: number): Promise<ExternalRecipeDetail> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}/api/external/${id}`, { signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+
+  const body = await res.json().catch(() => null);
+  if (!res.ok) {
+    throw new Error(body?.error ?? `El servidor respondió ${res.status}.`);
+  }
+  return (body as { recipe: ExternalRecipeDetail }).recipe;
+}
+
 export async function fetchSuggestions(
   ingredients: string[],
   diet?: Diet
 ): Promise<SuggestResponse> {
-  const res = await fetch(`${API_URL}/api/suggestions`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ingredients, ...(diet && { diet }) }),
-    signal: AbortSignal.timeout(10000),
-  });
+  // AbortSignal.timeout() no existe en Hermes (Android/iOS); se emula con AbortController
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}/api/suggestions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ingredients, ...(diet && { diet }) }),
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
 
   const body = await res.json().catch(() => null);
   if (!res.ok) {

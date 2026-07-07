@@ -9,9 +9,9 @@ export default function NewRecipeScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Nueva receta' }} />
+      <Stack.Screen options={{ title: 'New recipe' }} />
       <RecipeForm
-        submitLabel="Crear receta"
+        submitLabel="Create recipe"
         onSubmit={async (input) => {
           await createRecipe(input);
           emitMascot('recipe-created');

@@ -42,7 +42,7 @@ export default function ShoppingScreen() {
       emitMascot('item-added');
       refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'No se pudo agregar el ítem.');
+      setError(e instanceof Error ? e.message : 'Could not add the item.');
     }
   };
 
@@ -68,7 +68,7 @@ export default function ShoppingScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.title}>
-        Lista de compras 🛒
+        Shopping list 🛒
       </ThemedText>
 
       <ThemedView style={styles.inputRow}>
@@ -76,14 +76,14 @@ export default function ShoppingScreen() {
           style={[styles.input, { color: textColor, borderColor, backgroundColor: cardColor }]}
           value={newItem}
           onChangeText={setNewItem}
-          placeholder="Ej: Kartoffeln"
+          placeholder="E.g.: Kartoffeln"
           placeholderTextColor={mutedColor}
           onSubmitEditing={handleAdd}
           returnKeyType="done"
           testID="shopping-input"
         />
         <BouncyPressable style={styles.addButton} onPress={handleAdd} testID="shopping-add">
-          <ThemedText style={styles.addButtonText}>Agregar</ThemedText>
+          <ThemedText style={styles.addButtonText}>Add</ThemedText>
         </BouncyPressable>
       </ThemedView>
       {error && (
@@ -102,7 +102,7 @@ export default function ShoppingScreen() {
           <ThemedView style={styles.emptyBox}>
             <ThemedText style={styles.emptyEmoji}>🧺</ThemedText>
             <ThemedText style={[styles.emptyText, { color: mutedColor }]} testID="shopping-empty">
-              La lista está vacía.
+              The list is empty.
             </ThemedText>
           </ThemedView>
         }
@@ -135,7 +135,7 @@ export default function ShoppingScreen() {
           style={styles.clearButton}
           onPress={handleClearChecked}
           testID="shopping-clear">
-          <ThemedText style={styles.clearButtonText}>✨ Quitar comprados</ThemedText>
+          <ThemedText style={styles.clearButtonText}>✨ Clear bought items</ThemedText>
         </BouncyPressable>
       )}
     </ThemedView>

@@ -33,12 +33,12 @@ export default function RecipesScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
-        <ThemedText type="title">Mis recetas 📖</ThemedText>
+        <ThemedText type="title">My recipes 📖</ThemedText>
         <BouncyPressable
           style={styles.addButton}
           onPress={() => router.push('/recipe/new')}
           testID="add-recipe">
-          <ThemedText style={styles.addButtonText}>+ Nueva</ThemedText>
+          <ThemedText style={styles.addButtonText}>+ New</ThemedText>
         </BouncyPressable>
       </ThemedView>
 
@@ -46,7 +46,7 @@ export default function RecipesScreen() {
         <ThemedView style={styles.empty}>
           <ThemedText style={styles.emptyEmoji}>🍰</ThemedText>
           <ThemedText style={[styles.emptyText, { color: mutedColor }]} testID="empty-state">
-            Todavía no tenés recetas.{'\n'}Creá la primera con el botón «+ Nueva».
+            No recipes yet.{'\n'}Create your first one with the «+ New» button.
           </ThemedText>
         </ThemedView>
       ) : (
@@ -65,8 +65,8 @@ export default function RecipesScreen() {
                   darkColor={cardColor}>
                   <ThemedText type="defaultSemiBold">{item.title}</ThemedText>
                   <ThemedText style={[styles.cardMeta, { color: mutedColor }]}>
-                    🧂 {item.ingredients.length} ingrediente{item.ingredients.length === 1 ? '' : 's'} ·{' '}
-                    🍽️ {item.servings} porcione{item.servings === 1 ? '' : 's'}
+                    🧂 {item.ingredients.length} ingredient{item.ingredients.length === 1 ? '' : 's'} ·{' '}
+                    🍽️ {item.servings} serving{item.servings === 1 ? '' : 's'}
                   </ThemedText>
                 </ThemedView>
               </BouncyPressable>

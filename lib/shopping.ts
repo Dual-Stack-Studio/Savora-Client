@@ -20,12 +20,12 @@ const STORAGE_KEY = 'nicy-kitchen/shopping';
 
 export function validateItemName(name: string, existing: ShoppingItem[]): string | null {
   const trimmed = name.trim();
-  if (trimmed.length === 0) return 'El ítem no puede estar vacío.';
-  if (trimmed.length > ITEM_MAX) return `El ítem no puede superar los ${ITEM_MAX} caracteres.`;
+  if (trimmed.length === 0) return 'Item cannot be empty.';
+  if (trimmed.length > ITEM_MAX) return `Item can't be longer than ${ITEM_MAX} characters.`;
   const duplicate = existing.some(
     (i) => !i.checked && i.name.toLowerCase() === trimmed.toLowerCase()
   );
-  if (duplicate) return 'Ese ítem ya está en la lista.';
+  if (duplicate) return 'That item is already on the list.';
   return null;
 }
 

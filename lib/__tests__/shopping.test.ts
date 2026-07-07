@@ -36,7 +36,7 @@ describe('validateItemName', () => {
   it('rechaza duplicado pendiente aunque cambie mayúsculas', async () => {
     await addItem('Papas');
     const items = await listItems();
-    expect(validateItemName('papas', items)).toBe('Ese ítem ya está en la lista.');
+    expect(validateItemName('papas', items)).toBe('That item is already on the list.');
   });
 
   // TC-SHOP-05: se permite repetir un ítem ya comprado
@@ -75,7 +75,7 @@ describe('operaciones de la lista', () => {
 
   // TC-SHOP-08: addItem inválido lanza y no persiste
   it('addItem con nombre vacío lanza error y no guarda nada', async () => {
-    await expect(addItem('  ')).rejects.toThrow('El ítem no puede estar vacío.');
+    await expect(addItem('  ')).rejects.toThrow('Item cannot be empty.');
     expect(await listItems()).toHaveLength(0);
   });
 });

@@ -6,7 +6,8 @@ App de recetas y cocina construida con [Expo SDK 54](https://docs.expo.dev/versi
 
 - [x] **M1 — Núcleo:** CRUD de recetas propias + lista de compras (persistencia local)
 - [x] **M2a — Backend:** API de sugerencias por ingredientes con filtro de dieta (repo [nicy-kitchen-api](../nicy-kitchen-api))
-- [x] **M2b — UI (actual):** tema "de la nona", animaciones, mascota Ñoqui 🍪 y tab "¿Qué cocino?" conectada al backend
+- [x] **M2b — UI:** tema "de la nona", animaciones, mascota 🐑 y tab "What to cook?" conectada al backend
+- [x] **M2c — Home (actual):** carruseles de noticias de comida/salud (NewsData.io vía backend)
 - [ ] **M2b — Backend:** auth, recetas del usuario en el servidor, deploy en Railway (SQLite → Postgres)
 - [ ] **M3 — Social:** amigos, compartir/editar recetas, partner de lista de compras
 - [ ] **M4 — Media & IA:** OCR de PDF/fotos, subida de fotos/videos, sugerencias por ingredientes

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 
 import { BouncyPressable } from '@/components/bouncy-pressable';
@@ -14,13 +15,14 @@ import { emitMascot } from '@/lib/mascot';
 const QUICK_INGREDIENTS = ['egg', 'potato', 'onion', 'tomato', 'rice', 'cheese', 'garlic', 'pasta'];
 
 const DIET_OPTIONS: { value?: Diet; label: string }[] = [
-  { value: undefined, label: 'Todas' },
-  { value: 'vegan', label: '🌱 Vegana' },
-  { value: 'vegetarian', label: '🥚 Vegetariana' },
-  { value: 'mit_meat', label: '🥩 Con carne' },
+  { value: undefined, label: 'All' },
+  { value: 'vegan', label: '🌱 Vegan' },
+  { value: 'vegetarian', label: '🥚 Vegetarian' },
+  { value: 'mit_meat', label: '🥩 With meat' },
 ];
 
 export default function CookScreen() {
+  const router = useRouter();
   const [input, setInput] = useState('');
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [diet, setDiet] = useState<Diet | undefined>(undefined);
@@ -56,7 +58,7 @@ export default function CookScreen() {
       emitMascot(total > 0 ? 'results' : 'no-results');
     } catch (e) {
       setResult(null);
-      setError(e instanceof Error ? e.message : 'No se pudo conectar con la cocina.');
+      setError(e instanceof Error ? e.message : 'Could not reach the kitchen.');
       emitMascot('error');
     } finally {
       setLoading(false);
@@ -66,9 +68,9 @@ export default function CookScreen() {
   return (
     <ThemedView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-        <ThemedText type="title">¿Qué cocino? 🍳</ThemedText>
+        <ThemedText type="title">What to cook? 🍳</ThemedText>
         <ThemedText style={[styles.hint, { color: mutedColor }]}>
-          Contame qué tenés en la heladera (en inglés o alemán) y te digo qué podés cocinar.
+          Tell me what you have in the fridge (in English or German) and I&apos;ll tell you what you can cook.
         </ThemedText>
 
         <View style={styles.inputRow}>
@@ -76,7 +78,7 @@ export default function CookScreen() {
             style={[styles.input, { color: textColor, borderColor, backgroundColor: cardColor }]}
             value={input}
             onChangeText={setInput}
-            placeholder="Ej: egg, Kartoffel, onion…"
+            placeholder="E.g.: egg, Kartoffel, onion…"
             placeholderTextColor={mutedColor}
             onSubmitEditing={() => addIngredient(input)}
             returnKeyType="done"
@@ -142,7 +144,7 @@ export default function CookScreen() {
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <ThemedText style={styles.searchButtonText}>Buscar recetas 🔍</ThemedText>
+            <ThemedText style={styles.searchButtonText}>Find recipes 🔍</ThemedText>
           )}
         </BouncyPressable>
 
@@ -150,7 +152,7 @@ export default function CookScreen() {
           <Animated.View entering={FadeInUp} style={styles.errorBox}>
             <ThemedText style={styles.errorText}>😵 {error}</ThemedText>
             <ThemedText style={[styles.errorHint, { color: mutedColor }]}>
-              ¿Está corriendo el backend? (npm run dev en nicy-kitchen-api)
+              Is the backend running? (npm run dev in nicy-kitchen-api)
             </ThemedText>
           </Animated.View>
         )}
@@ -158,7 +160,7 @@ export default function CookScreen() {
         {result && result.unknownIngredients.length > 0 && (
           <Animated.View entering={FadeInUp} style={[styles.unknownBox, { borderColor }]}>
             <ThemedText style={[styles.unknownText, { color: mutedColor }]}>
-              🤷 Estos no los conozco: {result.unknownIngredients.join(', ')}
+              🤷 I don&apos;t know these: {result.unknownIngredients.join(', ')}
             </ThemedText>
           </Animated.View>
         )}
@@ -166,7 +168,7 @@ export default function CookScreen() {
         {result && result.suggestions.length === 0 && (result.external?.length ?? 0) === 0 && !error && (
           <Animated.View entering={FadeInUp} style={styles.emptyBox}>
             <ThemedText style={{ color: mutedColor, textAlign: 'center' }}>
-              🥺 No encontré nada con eso… ¡probá agregando más ingredientes!
+              🥺 Nothing found with that… try adding more ingredients!
             </ThemedText>
           </Animated.View>
         )}
@@ -175,31 +177,40 @@ export default function CookScreen() {
         {result && result.suggestions.length > 0 && (
           <>
             <ThemedText type="subtitle" style={styles.sectionTitle}>
-              De tu cocina 🏠
+              From your kitchen 🏠
             </ThemedText>
             {result.suggestions.map((s, index) => (
               <Animated.View key={s.id} entering={FadeInDown.delay(index * 90).springify()}>
-                <View style={[styles.card, { backgroundColor: cardColor, borderColor }]}>
-                  <View style={styles.cardHeader}>
-                    <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
-                      {s.title}
-                    </ThemedText>
-                    <View style={styles.scoreBadge}>
-                      <ThemedText style={styles.scoreText}>{Math.round(s.score * 100)}%</ThemedText>
+                <BouncyPressable
+                  onPress={() =>
+                    router.push({
+                      pathname: '/catalog/[id]',
+                      params: { id: s.id, matched: s.matched.join(','), missing: s.missing.join(',') },
+                    })
+                  }
+                  testID={`suggestion-card-${s.id}`}>
+                  <View style={[styles.card, { backgroundColor: cardColor, borderColor }]}>
+                    <View style={styles.cardHeader}>
+                      <ThemedText type="defaultSemiBold" style={styles.cardTitle}>
+                        {s.title}
+                      </ThemedText>
+                      <View style={styles.scoreBadge}>
+                        <ThemedText style={styles.scoreText}>{Math.round(s.score * 100)}%</ThemedText>
+                      </View>
                     </View>
-                  </View>
-                  <View style={styles.scoreBarTrack}>
-                    <View style={[styles.scoreBarFill, { width: `${Math.round(s.score * 100)}%` }]} />
-                  </View>
-                  <ThemedText style={[styles.cardDetail, { color: mutedColor }]}>
-                    ✅ Tenés: {s.matched.join(', ')}
-                  </ThemedText>
-                  {s.missing.length > 0 && (
+                    <View style={styles.scoreBarTrack}>
+                      <View style={[styles.scoreBarFill, { width: `${Math.round(s.score * 100)}%` }]} />
+                    </View>
                     <ThemedText style={[styles.cardDetail, { color: mutedColor }]}>
-                      🛒 Te falta: {s.missing.join(', ')}
+                      ✅ You have: {s.matched.join(', ')}
                     </ThemedText>
-                  )}
-                </View>
+                    {s.missing.length > 0 && (
+                      <ThemedText style={[styles.cardDetail, { color: mutedColor }]}>
+                        🛒 Missing: {s.missing.join(', ')}
+                      </ThemedText>
+                    )}
+                  </View>
+                </BouncyPressable>
               </Animated.View>
             ))}
           </>
@@ -209,21 +220,25 @@ export default function CookScreen() {
         {result?.external && result.external.length > 0 && (
           <>
             <ThemedText type="subtitle" style={styles.sectionTitle}>
-              Ideas de internet 🌍
+              Ideas from the internet 🌍
             </ThemedText>
             {result.external.map((s, index) => (
               <Animated.View key={s.id} entering={FadeInDown.delay(index * 90).springify()}>
-                <View style={[styles.card, styles.externalCard, { backgroundColor: cardColor, borderColor }]}>
-                  {s.image && <Image source={{ uri: s.image }} style={styles.externalImage} contentFit="cover" />}
-                  <View style={styles.externalInfo}>
-                    <ThemedText type="defaultSemiBold" numberOfLines={2}>
-                      {s.title}
-                    </ThemedText>
-                    <ThemedText style={[styles.cardDetail, { color: mutedColor }]}>
-                      Usa {s.matchedCount} de los tuyos · faltan {s.missingCount}
-                    </ThemedText>
+                <BouncyPressable
+                  onPress={() => router.push({ pathname: '/external/[id]', params: { id: s.id } })}
+                  testID={`external-card-${s.id}`}>
+                  <View style={[styles.card, styles.externalCard, { backgroundColor: cardColor, borderColor }]}>
+                    {s.image && <Image source={{ uri: s.image }} style={styles.externalImage} contentFit="cover" />}
+                    <View style={styles.externalInfo}>
+                      <ThemedText type="defaultSemiBold" numberOfLines={2}>
+                        {s.title}
+                      </ThemedText>
+                      <ThemedText style={[styles.cardDetail, { color: mutedColor }]}>
+                        Uses {s.matchedCount} of yours · missing {s.missingCount}
+                      </ThemedText>
+                    </View>
                   </View>
-                </View>
+                </BouncyPressable>
               </Animated.View>
             ))}
           </>
@@ -231,7 +246,7 @@ export default function CookScreen() {
 
         {result?.externalError && (
           <ThemedText style={[styles.cardDetail, { color: mutedColor, textAlign: 'center', marginTop: 8 }]}>
-            🌍 Las ideas de internet no están disponibles ahora ({result.externalError})
+            🌍 Internet ideas are not available right now ({result.externalError})
           </ThemedText>
         )}
       </ScrollView>

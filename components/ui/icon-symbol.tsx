@@ -21,6 +21,7 @@ const MAPPING = {
   'book.fill': 'menu-book',
   'frying.pan.fill': 'restaurant',
   'cart.fill': 'shopping-cart',
+  'newspaper.fill': 'article',
 } as IconMapping;
 
 /**

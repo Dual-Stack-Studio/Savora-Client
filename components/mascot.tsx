@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, {
   Easing,
   FadeIn,
@@ -10,85 +10,100 @@ import Animated, {
   withSequence,
   withSpring,
   withTiming,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 
-import { Palette } from '@/constants/theme';
-import { emitMascot, MascotEvent, subscribeMascot } from '@/lib/mascot';
+import { Palette } from "@/constants/theme";
+import { emitMascot, MascotEvent, subscribeMascot } from "@/lib/mascot";
 
 /**
- * Ñoqui 🍪 — la mascota tamagotchi de Nicy Kitchen.
- * Vive flotando abajo a la derecha, respira, parpadea, y reacciona
- * a todo lo que hace el usuario (via lib/mascot.ts).
+ * Wooly 🐑 — the Nicy Kitchen tamagotchi, modeled after a black plush sheep
+ * (dark wool, cream face, embroidered features, purple ribbon).
+ * Esta versión usa las imágenes en formato ICONO (PNG sin fondo).
+ * Se ha ajustado el timing para asegurar que las animaciones de parpadeo sean visibles.
  */
 
-type Mood = { face: string; message: string };
+// ⚠️ IMPORTANTE: Asegúrate de que estos dos archivos sean PNGs con transparencia real
+// (sin fondo blanco ni de colores) para que se comporten como iconos flotantes.
+const SHEEP_OPEN = require("../assets/images/sheep_open.png-removebg-preview.png");
+const SHEEP_CLOSED = require("../assets/images/sheep_closed.png-removebg-preview.png");
+
+type Eyes = "open" | "closed" | "happy" | "dizzy";
+
+type Mood = { eyes: Eyes; mouth: string; message: string };
 
 const REACTIONS: Record<MascotEvent, Mood[]> = {
-  'recipe-created': [
-    { face: '😋', message: '¡Ñami! Receta nueva' },
-    { face: '🤩', message: '¡Esa la quiero probar!' },
+  "recipe-created": [
+    { eyes: "happy", mouth: "ᵕ", message: "Yummy! A new recipe" },
+    { eyes: "happy", mouth: "o", message: "Baa! I want to try that one!" },
   ],
-  'recipe-updated': [{ face: '😊', message: '¡Quedó mejor todavía!' }],
-  'recipe-deleted': [{ face: '🫡', message: 'Chau receta…' }],
-  'item-added': [
-    { face: '😄', message: '¡A la lista!' },
-    { face: '🛒', message: '¡Anotado!' },
+  "recipe-updated": [
+    { eyes: "happy", mouth: "ᵕ", message: "Even better now!" },
   ],
-  'item-checked': [
-    { face: '🥳', message: '¡Conseguido!' },
-    { face: '😄', message: '¡Uno menos!' },
+  "recipe-deleted": [
+    { eyes: "closed", mouth: "‸", message: "Bye bye, recipe…" },
   ],
-  'list-cleared': [{ face: '✨', message: '¡Lista limpia!' }],
-  searching: [{ face: '🤔', message: 'Mmm… pensando…' }],
+  "item-added": [
+    { eyes: "happy", mouth: "ᵕ", message: "On the list!" },
+    { eyes: "open", mouth: "o", message: "Noted!" },
+  ],
+  "item-checked": [
+    { eyes: "happy", mouth: "ᵕ", message: "Got it!" },
+    { eyes: "happy", mouth: "o", message: "One less to go!" },
+  ],
+  "list-cleared": [{ eyes: "happy", mouth: "ᵕ", message: "All clean!" }],
+  searching: [{ eyes: "closed", mouth: "~", message: "Hmm… thinking…" }],
   results: [
-    { face: '🤩', message: '¡Mirá lo que encontré!' },
-    { face: '😋', message: '¡Se me hace agua la boca!' },
+    { eyes: "happy", mouth: "o", message: "Look what I found!" },
+    { eyes: "happy", mouth: "ᵕ", message: "My mouth is watering!" },
   ],
-  'no-results': [{ face: '🥺', message: 'No encontré nada…' }],
-  error: [{ face: '😵', message: '¡Ups! Algo salió mal' }],
+  "no-results": [
+    { eyes: "closed", mouth: "‸", message: "Couldn't find anything…" },
+  ],
+  error: [{ eyes: "dizzy", mouth: "o", message: "Oops! Something went wrong" }],
   poke: [
-    { face: '🤭', message: '¡Jiji! ¿Qué cocinamos?' },
-    { face: '😊', message: '¡Hola! Soy Ñoqui' },
-    { face: '😋', message: '¿Me convidás?' },
+    { eyes: "happy", mouth: "ᵕ", message: "Baa! Let's cook!" },
+    { eyes: "open", mouth: "ᵕ", message: "Hi! I'm Linna" },
+    { eyes: "happy", mouth: "o", message: "Will you share a bite?" },
   ],
 };
 
-const IDLE_FACE = '😊';
-const BLINK_FACE = '😌';
+const IDLE: Pick<Mood, "eyes" | "mouth"> = { eyes: "open", mouth: "ᵕ" };
 
 function pick<T>(options: T[]): T {
   return options[Math.floor(Math.random() * options.length)];
 }
 
 export function Mascot() {
-  const [face, setFace] = useState(IDLE_FACE);
+  const [eyes, setEyes] = useState<Eyes>(IDLE.eyes);
+  const [mouth, setMouth] = useState(IDLE.mouth);
   const [message, setMessage] = useState<string | null>(null);
+  const reacting = useRef(false);
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const bob = useSharedValue(0);
   const scale = useSharedValue(1);
   const rotate = useSharedValue(0);
 
-  // Respiración: sube y baja suave, siempre.
+  // Breathing: gentle up and down, forever.
   useEffect(() => {
     bob.value = withRepeat(
       withSequence(
         withTiming(-5, { duration: 1400, easing: Easing.inOut(Easing.quad) }),
-        withTiming(0, { duration: 1400, easing: Easing.inOut(Easing.quad) })
+        withTiming(0, { duration: 1400, easing: Easing.inOut(Easing.quad) }),
       ),
       -1,
-      true
+      true,
     );
   }, [bob]);
 
-  // Parpadeo cada tanto para que se sienta vivo.
+  // Blink every few seconds so she feels alive.
   useEffect(() => {
     const blink = setInterval(() => {
-      setFace((current) => {
-        if (current !== IDLE_FACE) return current; // no interrumpir una reacción
-        setTimeout(() => setFace((f) => (f === BLINK_FACE ? IDLE_FACE : f)), 350);
-        return BLINK_FACE;
-      });
+      if (reacting.current) return;
+      setEyes("closed");
+      setTimeout(() => {
+        if (!reacting.current) setEyes(IDLE.eyes);
+      }, 500); // ⏱️ AUMENTADO DE 320 a 500 para dar tiempo a renderizar la imagen alternativa
     }, 4200);
     return () => clearInterval(blink);
   }, []);
@@ -96,26 +111,30 @@ export function Mascot() {
   useEffect(() => {
     const react = (event: MascotEvent) => {
       const mood = pick(REACTIONS[event]);
-      setFace(mood.face);
+      reacting.current = true;
+      setEyes(mood.eyes);
+      setMouth(mood.mouth); // Se mantiene en el estado aunque no lo rendericemos visualmente en la imagen
       setMessage(mood.message);
 
-      // Salto de alegría (o sacudida si es un poke)
+      // Happy jump (or a wiggle for pokes and errors)
       scale.value = withSequence(
-        withSpring(1.25, { damping: 6, stiffness: 300 }),
-        withSpring(1, { damping: 8, stiffness: 200 })
+        withSpring(1.22, { damping: 6, stiffness: 300 }),
+        withSpring(1, { damping: 8, stiffness: 200 }),
       );
-      if (event === 'poke' || event === 'error') {
+      if (event === "poke" || event === "error") {
         rotate.value = withSequence(
           withTiming(-12, { duration: 80 }),
           withTiming(12, { duration: 80 }),
           withTiming(-8, { duration: 80 }),
-          withTiming(0, { duration: 80 })
+          withTiming(0, { duration: 80 }),
         );
       }
 
       if (resetTimer.current) clearTimeout(resetTimer.current);
       resetTimer.current = setTimeout(() => {
-        setFace(IDLE_FACE);
+        reacting.current = false;
+        setEyes(IDLE.eyes);
+        setMouth(IDLE.mouth);
         setMessage(null);
       }, 2400);
     };
@@ -135,22 +154,32 @@ export function Mascot() {
     ],
   }));
 
+  // Determinamos qué imagen mostrar basándonos en el estado de "eyes"
+  // Añadí 'happy' a las reacciones que cierran los ojos para que haya más interacción visible
+  const currentImage =
+    eyes === "closed" || eyes === "dizzy" || eyes === "happy"
+      ? SHEEP_CLOSED
+      : SHEEP_OPEN;
+
   return (
     <View style={styles.container} pointerEvents="box-none">
       {message && (
-        <Animated.View entering={FadeIn.duration(150)} exiting={FadeOut.duration(200)} style={styles.bubble}>
+        <Animated.View
+          entering={FadeIn.duration(150)}
+          exiting={FadeOut.duration(200)}
+          style={styles.bubble}
+        >
           <Text style={styles.bubbleText}>{message}</Text>
         </Animated.View>
       )}
-      <Animated.View style={bodyStyle}>
+      <Animated.View style={bodyStyle} pointerEvents="box-none">
+        <Image source={currentImage} style={styles.mascotImage} resizeMode="contain" />
         <Pressable
-          onPress={() => emitMascot('poke')}
+          onPress={() => emitMascot("poke")}
           testID="mascot"
-          accessibilityLabel="Ñoqui, la mascota">
-          <View style={styles.body}>
-            <Text style={styles.face}>{face}</Text>
-          </View>
-        </Pressable>
+          accessibilityLabel="Wooly the sheep"
+          style={styles.mascotHitArea}
+        />
       </Animated.View>
     </View>
   );
@@ -158,39 +187,43 @@ export function Mascot() {
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    right: 14,
-    bottom: 96,
-    alignItems: 'flex-end',
+    position: "absolute",
+    right: -50,
+    bottom: 30,
+    alignItems: "flex-end",
     zIndex: 1000,
   },
-  body: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: Palette.pinkSoft,
-    borderWidth: 2.5,
-    borderColor: Palette.rose,
-    alignItems: 'center',
-    justifyContent: 'center',
+  mascotImage: {
+    width: 200,
+    height: 200,
+    // Conserva la posición que antes daba el padding del Pressable
+    margin: 10,
+    // Las sombras nativas funcionan bien con PNGs transparentes en iOS,
+    // pero en Android podrías necesitar ajustar 'elevation' si la sombra se ve cuadrada.
     shadowColor: Palette.chocolate,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
     shadowRadius: 6,
-    elevation: 6,
   },
-  face: {
-    fontSize: 28,
-    lineHeight: 34,
+  // Zona táctil acotada al cuerpo visible de la oveja: el PNG es 200x200 pero
+  // casi todo es transparente, y un Pressable de ese tamaño bloqueaba los
+  // botones y cards de abajo. Solo esta caja captura toques; el resto pasa.
+  mascotHitArea: {
+    position: "absolute",
+    left: 45,
+    top: 50,
+    width: 105,
+    height: 130,
   },
   bubble: {
     backgroundColor: Palette.rose,
+    right: 60,
     borderRadius: 14,
     borderBottomRightRadius: 4,
     paddingHorizontal: 12,
     paddingVertical: 7,
-    marginBottom: 8,
-    maxWidth: 190,
+    marginBottom: -30,
+    maxWidth: 250,
     shadowColor: Palette.chocolate,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -198,8 +231,8 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   bubbleText: {
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
     fontSize: 13,
   },
 });

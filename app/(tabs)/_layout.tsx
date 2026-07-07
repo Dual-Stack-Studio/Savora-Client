@@ -12,6 +12,7 @@ export default function TabLayout() {
 
   return (
     <Tabs
+      initialRouteName="home"
       screenOptions={{
         tabBarActiveTintColor: palette.tabIconSelected,
         tabBarInactiveTintColor: palette.tabIconDefault,
@@ -23,23 +24,30 @@ export default function TabLayout() {
         },
       }}>
       <Tabs.Screen
+        name="home"
+        options={{
+          title: 'Home',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="newspaper.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="index"
         options={{
-          title: 'Recetas',
+          title: 'Recipes',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="book.fill" color={color} />,
         }}
       />
       <Tabs.Screen
         name="cook"
         options={{
-          title: '¿Qué cocino?',
+          title: 'What to cook?',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="frying.pan.fill" color={color} />,
         }}
       />
       <Tabs.Screen
         name="shopping"
         options={{
-          title: 'Compras',
+          title: 'Shopping',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="cart.fill" color={color} />,
         }}
       />

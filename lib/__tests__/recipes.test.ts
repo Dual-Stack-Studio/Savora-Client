@@ -35,13 +35,13 @@ describe('validateRecipe (reglas de negocio)', () => {
   // TC-REC-02
   it('rechaza título vacío', () => {
     const errors = validateRecipe({ ...validInput(), title: '' });
-    expect(errors.title).toBe('El título es obligatorio.');
+    expect(errors.title).toBe('Title is required.');
   });
 
   // TC-REC-03: solo espacios cuenta como vacío
   it('rechaza título con solo espacios', () => {
     const errors = validateRecipe({ ...validInput(), title: '    ' });
-    expect(errors.title).toBe('El título es obligatorio.');
+    expect(errors.title).toBe('Title is required.');
   });
 
   // TC-REC-04: límite inferior (2 chars falla, 3 pasa)
@@ -59,7 +59,7 @@ describe('validateRecipe (reglas de negocio)', () => {
   // TC-REC-06
   it('rechaza receta sin ingredientes', () => {
     const errors = validateRecipe({ ...validInput(), ingredients: [] });
-    expect(errors.ingredients).toBe('Agregá al menos un ingrediente.');
+    expect(errors.ingredients).toBe('Add at least one ingredient.');
   });
 
   // TC-REC-07: ingredientes con nombre vacío no cuentan
@@ -126,7 +126,7 @@ describe('CRUD de recetas (storage)', () => {
 
   // TC-REC-14: actualizar algo que no existe
   it('updateRecipe con id inexistente lanza error', async () => {
-    await expect(updateRecipe('no-existe', validInput())).rejects.toThrow(/No existe la receta/);
+    await expect(updateRecipe('no-existe', validInput())).rejects.toThrow(/does not exist/);
   });
 
   // TC-REC-15
